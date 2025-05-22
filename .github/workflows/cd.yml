@@ -2,7 +2,7 @@ name: CI-CD Pipeline
 
 on:
   workflow_run:
-    workflows: ["React CI Pipeline"]
+    workflows: ["Sample React CI Pipeline / Workflow"]  # Must match `name:` in CI workflow
     types:
       - completed
   workflow_dispatch:
@@ -16,15 +16,20 @@ jobs:
       - name: Download build artifact from CI
         uses: actions/download-artifact@v4
         with:
-          name: build-files
+          name: output-folder  # 👈 MUST MATCH the artifact name in CI
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Show contents of downloaded artifact
-        run: ls -R build-files
+      - name: List files for debugging
+        run: |
+          echo "Root:"
+          ls -al
+          echo "Inside output-folder:"
+          ls -al output-folder
 
       - name: Install Vercel CLI
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --name=cicd-project --cwd=build-files/build
+        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --name=cicd-project --cwd=output-folder
+
