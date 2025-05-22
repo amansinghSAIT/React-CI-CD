@@ -35,38 +35,30 @@
 
 
 
-name: "CI-CD Pipeline"
+name: CI-CD Pipeline
 
 on:
   workflow_run:
-    workflows: ["React CI Pipeline"]  # ← This must match CI workflow name (not file name)
+    workflows: ["React CI Pipeline"]  # Must match `name:` in CI workflow
     types:
       - completed
   workflow_dispatch:
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: Production
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only trigger on success
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Download build artifact from CI
+        uses: actions/download-artifact@v4
         with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build React App
-        run: npm run build
+          name: build-files
+          run-id: ${{ github.event.workflow_run.id }}  # 👈 Required for cross-workflow download
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Vercel CLI
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --name=cicd-project
-
-   
+        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --name=cicd-project --cwd=build-files
