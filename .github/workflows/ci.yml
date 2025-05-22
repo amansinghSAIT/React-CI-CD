@@ -39,5 +39,5 @@ jobs:
         uses: action/upload-artifact@v3
         with:
             name: build
-            path: /dist
+            path: dist
 
