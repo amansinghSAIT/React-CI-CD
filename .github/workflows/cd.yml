@@ -1,39 +1,71 @@
-name: "CD Pipeline"
+# name: "CD Pipeline"
+
+# on:
+#   workflow_run:
+#     workflows: ["React CI Pipeline"]  # <-- This should match the CI workflow's name
+
+#     types:
+#       - completed
+#   workflow_dispatch:
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     environment: Production  # ⛳ correct key is 'runs-on', not 'run-on'
+
+#     steps:
+#       - name: "Setup Node.js"
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '21'
+
+#       - name: "Setup Vercel CLI"
+#         run: npm install -g vercel
+
+#       # This will fail unless artifacts are available in this workflow
+#       # This step will not work if you're trying to download an artifact from another workflow!
+#       - name: "Download build artifact"
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: build
+        #   run-id: ${{github.event.workflow_run.id}}
+        #   github-token: ${{secrets.GITHUB_TOKEN}}
+
+#       - name: "deploy vercel"
+#         run: vercel --prod --token=$({secrets.vercel_token}) --confirm --name=cicd project
+
+
+
+name: "CI-CD Pipeline"
 
 on:
-  workflow_run:
-    workflows: ["React CI Pipeline"]  # <-- This should match the CI workflow's name
-
-    types:
-      - completed
+  push:
+    branches: [ main ]
   workflow_dispatch:
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    environment: Production  # ⛳ correct key is 'runs-on', not 'run-on'
+    environment: Production
 
     steps:
-      - name: "Setup Node.js"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '21'
+          node-version: '18'
 
-      - name: "Setup Vercel CLI"
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React App
+        run: npm run build
+
+      - name: Install Vercel CLI
         run: npm install -g vercel
 
-      # This will fail unless artifacts are available in this workflow
-      # This step will not work if you're trying to download an artifact from another workflow!
-      - name: "Download build artifact"
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          run-id: ${{github.event.workflow_run.id}}
-          github-token: ${{secrets.GITHUB_TOKEN}}
-
-      - name: "deploy vercel"
-        run: vercel --prod --token=$({secrets.vercel_token}) --confirm --name=cicd project
-       
-
-
+      - name: Deploy to Vercel
+        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --name=cicd-project
 
    
