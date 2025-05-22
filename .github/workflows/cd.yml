@@ -13,27 +13,27 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Download build artifact from CI
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: output-folder
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Debug listing
+      - name: Check artifact structure
         run: |
-          echo "Root folder:"
+          echo "Root level:"
           ls -al
           echo "Inside output-folder:"
           ls -al output-folder
+          echo "Inside output-folder/index.html:"
+          cat output-folder/index.html || echo "Missing index.html!"
 
       - name: Install Vercel CLI
         run: npm install -g vercel
 
-      - name: Link project to Vercel (optional but helpful)
-        run: vercel link --token=${{ secrets.VERCEL_TOKEN }} --yes
+    #   - name: Deploy to Vercel
+    #     run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --cwd=output-folder --prebuilt
 
-      - name: Deploy to Vercel (Static Files Mode)
-        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --name=cicd-project --cwd=output-folder --prebuilt
 
 
