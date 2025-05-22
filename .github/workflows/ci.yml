@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -21,6 +19,15 @@ jobs:
 
       - name: "check node version"
         run: node --version
+
+      - name: "clone the repo"
+        uses: actions/checkout@v2
+
+      - name: "list of repo"
+        run: ls
+
+      - name: "install dependencies"
+        run: npm install
 
       
 
