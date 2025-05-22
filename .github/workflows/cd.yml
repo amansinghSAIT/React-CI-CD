@@ -2,7 +2,8 @@ name: "CD Pipeline"
 
 on:
   workflow_run:
-    workflows: ["sample reacts ci pipelines/workflow"]
+    workflows: ["React CI Pipeline"]  # <-- This should match the CI workflow's name
+
     types:
       - completed
   workflow_dispatch:
