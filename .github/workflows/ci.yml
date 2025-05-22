@@ -1,40 +1,64 @@
-name: "Sample React CI Pipeline / Workflow"
+# name: "Sample React CI Pipeline / Workflow"
+
+# on:
+#   push:
+#     branches:
+#       - main
+#       - master
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '18'
+
+#       - name: Clone the repo
+#         uses: actions/checkout@v4
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Run test
+#         run: npm test
+
+#       - name: Run build
+#         run: npm run build
+
+#       - name: List contents of dist
+#         run: ls -al dist
+
+#       - name: Upload artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: output-folder
+#           path: dist/
+
+name: React CI Pipeline
 
 on:
   push:
     branches:
       - main
-      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
-
-      - name: Clone the repo
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run test
-        run: npm test
-
-      - name: Run build
-        run: npm run build
-
-      - name: List contents of dist
-        run: ls -al dist
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - run: npm install
+      - run: npm test
+      - run: npm run build
+      - uses: actions/upload-artifact@v3
         with:
-          name: output-folder
+          name: build-files
           path: dist/
+
 
 
