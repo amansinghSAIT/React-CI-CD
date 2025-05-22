@@ -1,39 +1,38 @@
-name: CI-CD Pipeline
+name: "CD Pipeline"
 
 on:
   workflow_run:
-    workflows: ["Sample React CI Pipeline / Workflow"]  # Should match your CI workflow name exactly
+    workflows: ["sample reacts ci pipelines/workflow"]
     types:
       - completed
-  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: "Production"  # ⛳ correct key is 'runs-on', not 'run-on'
 
     steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
         with:
-          name: output-folder
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '21'
 
-      - name: Check artifact structure
-        run: |
-          echo "Root level:"
-          ls -al
-          echo "Checking for index.html:"
-          if [ -f index.html ]; then echo "✅ index.html found"; else echo "❌ index.html MISSING"; fi
-
-      - name: Install Vercel CLI
+      - name: "Setup Vercel CLI"
         run: npm install -g vercel
 
-      - name: Deploy to Vercel
-        run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}" --confirm --cwd=. --prebuilt
+      # This will fail unless artifacts are available in this workflow
+      # This step will not work if you're trying to download an artifact from another workflow!
+      - name: "Download build artifact"
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          run-id: ${{github.event.workflow_run.id}}
+          github-token: ${{github.token}}
+
+      - name: "deploy vercel"
+        run: vercel --prod --token=$({secrets.VERCEL_TAKEN}) --confirm --name=cicd project
+       
 
 
 
-
-
+   
