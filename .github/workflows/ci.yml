@@ -29,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: List contents of build folder
-        run: ls -al build
+        run: ls build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
