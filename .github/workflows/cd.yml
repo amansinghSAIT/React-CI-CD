@@ -38,10 +38,11 @@
 name: "CI-CD Pipeline"
 
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["React CI Pipeline"]  # ← This must match CI workflow name (not file name)
+    types:
+      - completed
   workflow_dispatch:
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
