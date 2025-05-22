@@ -26,14 +26,15 @@ jobs:
           ls -al
           echo "Inside output-folder:"
           ls -al output-folder
-          echo "Inside output-folder/index.html:"
-          cat output-folder/index.html || echo "Missing index.html!"
+          echo "Checking for index.html:"
+          if [ -f output-folder/index.html ]; then echo "✅ index.html found"; else echo "❌ index.html MISSING"; fi
 
       - name: Install Vercel CLI
         run: npm install -g vercel
 
-    #   - name: Deploy to Vercel
-    #     run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --cwd=output-folder --prebuilt
+      - name: Deploy to Vercel
+        run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}" --confirm --cwd=output-folder --prebuilt
+
 
 
 
