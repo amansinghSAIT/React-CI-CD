@@ -2,7 +2,7 @@ name: CI-CD Pipeline
 
 on:
   workflow_run:
-    workflows: ["Sample React CI Pipeline / Workflow"]
+    workflows: ["Sample React CI Pipeline / Workflow"]  # Should match your CI workflow name exactly
     types:
       - completed
   workflow_dispatch:
@@ -24,16 +24,15 @@ jobs:
         run: |
           echo "Root level:"
           ls -al
-          echo "Inside output-folder:"
-          ls -al output-folder
           echo "Checking for index.html:"
-          if [ -f output-folder/index.html ]; then echo "✅ index.html found"; else echo "❌ index.html MISSING"; fi
+          if [ -f index.html ]; then echo "✅ index.html found"; else echo "❌ index.html MISSING"; fi
 
       - name: Install Vercel CLI
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}" --confirm --cwd=output-folder --prebuilt
+        run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}" --confirm --cwd=. --prebuilt
+
 
 
 
